@@ -14,6 +14,7 @@ import csv
 
 # for checking whether the csv file exists
 import os
+import subprocess
 
 # for giving the number of images to download as an argument
 import argparse
@@ -44,14 +45,8 @@ def get_ra(t):
 
 
 def download_image(name, ra, dec):
-    image_url = "http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx?ra=" + ra + "&dec=" + dec + "&scale=0.2&width=120&height=120"
-    # print ra, dec, image_url
-    resp = requests.get(image_url, stream=True)
-    local_file = open(PATH_TO_CSV + name + '.jpg', 'wb')
-    resp.raw.decode_content = True
-    shutil.copyfileobj(resp.raw, local_file)
-    del resp
-
+    cmd = f'wget -c -O {args.dir}{os.path.sep}{name}.jpg --post-data "ra={ra}&dec={dec}&scale=0.2&width=120&height=120" http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx'
+    subprocess.call(cmd, shell=True)
 
 # read in csv
 hnd = open(PATH_TO_CSV + "training_data.txt", "w+")
